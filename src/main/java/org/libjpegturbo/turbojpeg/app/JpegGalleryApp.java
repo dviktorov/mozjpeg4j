@@ -1,6 +1,10 @@
-package org.libjpegturbo.turbojpeg.utils;
+package org.libjpegturbo.turbojpeg.app;
 
 import org.libjpegturbo.turbojpeg.TJ;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageCompressor;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessInfo;
+import org.libjpegturbo.turbojpeg.compressor.impl.ImageCompressorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +32,8 @@ public class JpegGalleryApp {
     protected final static String VERSION = TJ.getDefaultVersion();
 
     private final static Logger log = LoggerFactory.getLogger(JpegGalleryApp.class);
+
+    private final static ImageCompressor imageCompressor = new ImageCompressorImpl();
 
     public static void main(String[] args) throws IOException, ImageProcessException {
 
@@ -59,7 +65,7 @@ public class JpegGalleryApp {
                 log.info("Processing image with quality={}: {}", q, inImage.getFileName());
 
                 long startTime = System.currentTimeMillis();
-                ImageProcessInfo processInfo = JpegCompressionUtils.compressJpeg(inImage.toFile(), outImage.toFile(), q);
+                ImageProcessInfo processInfo = imageCompressor.compressJpeg(inImage.toFile(), outImage.toFile(), q);
                 long totalTime = System.currentTimeMillis() - startTime;
 
                 long outImageSize = outImage.toFile().length();

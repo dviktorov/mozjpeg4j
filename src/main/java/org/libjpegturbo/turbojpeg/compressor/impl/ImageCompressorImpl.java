@@ -1,6 +1,9 @@
-package org.libjpegturbo.turbojpeg.utils;
+package org.libjpegturbo.turbojpeg.compressor.impl;
 
 import org.libjpegturbo.turbojpeg.*;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageCompressor;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessInfo;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,14 +13,14 @@ import java.util.Arrays;
 
 /**
  *
- * Utilities for JPEG compression.
+ * Utilities for JPEG compression. They can be used over its interface hiding the actual implementation.
  *
  * @since version 1.0,	01/06/2016
  *
  * @author Dmitry Viktorov
  *
  */
-public class JpegCompressionUtils {
+public class ImageCompressorImpl implements ImageCompressor {
 
     static TJScalingFactor[] sf = null;
 
@@ -26,11 +29,13 @@ public class JpegCompressionUtils {
         try { sf = TJ.getScalingFactors(); } catch (Exception e) {}
     }
 
-    public static ImageProcessInfo compressJpeg(File inFile, File outFile, int quality) throws ImageProcessException {
+    @Override
+    public ImageProcessInfo compressJpeg(File inFile, File outFile, int quality) throws ImageProcessException {
         return compressJpeg(inFile, outFile, quality, -1, 0, 1, 1);
     }
 
-    public static ImageProcessInfo compressJpeg(File inFile, File outFile, int quality, int outSubsamp, int flags, int scaleNum, int scaleDenom) throws ImageProcessException {
+    @Override
+    public ImageProcessInfo compressJpeg(File inFile, File outFile, int quality, int outSubsamp, int flags, int scaleNum, int scaleDenom) throws ImageProcessException {
 
         // Don't process image if TJ is not usable
         if (!TJ.isUsable()) {
@@ -76,7 +81,8 @@ public class JpegCompressionUtils {
      * @return ImageProcessInfo with embedded compressed JPEG image as byte array
      * @throws ImageProcessException
      */
-    public static ImageProcessInfo compressJpeg(byte[] inputImage, TJTransform transform, int quality, int outSubsamp, int flags, int scaleNum, int scaleDenom) throws ImageProcessException {
+    @Override
+    public ImageProcessInfo compressJpeg(byte[] inputImage, TJTransform transform, int quality, int outSubsamp, int flags, int scaleNum, int scaleDenom) throws ImageProcessException {
 
         ImageProcessInfo result = new ImageProcessInfo();
 
@@ -112,7 +118,6 @@ public class JpegCompressionUtils {
             // Close decompressor and nullify it
             decompressor.close();
             decompressor = null;
-
 
         } catch (Exception e) {
             throw new ImageProcessException(e);
@@ -173,6 +178,11 @@ public class JpegCompressionUtils {
         compressor.setSourceImage(image, 0, 0, 0, 0);
         //compressor.setSourceImage(bmpBuf, 0, 0, result.getOutputWidth(), 0, result.getOutputHeight(), TJ.PF_BGRX);
         return compressor;
+    }
+
+    @Override
+    public boolean isUsable() {
+        return TJ.isUsable();
     }
 
 }

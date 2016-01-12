@@ -1,4 +1,4 @@
-package org.libjpegturbo.turbojpeg.utils;
+package org.libjpegturbo.turbojpeg.compressor.api;
 
 /**
  *

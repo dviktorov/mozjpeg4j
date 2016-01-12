@@ -59,7 +59,7 @@ public class DigestUtils {
         try (DigestInputStream dis = new DigestInputStream(is, md)) {
 
             // Read the stream
-            byte[] buffer = new byte[4 * 1024];
+            byte[] buffer = new byte[4096];
             int read;
             while ((read = is.read(buffer)) != -1) {
                 md.update(buffer, 0, read);
