@@ -1,0 +1,61 @@
+apply plugin: "java"
+apply plugin: "application"
+//apply plugin: 'groovy'
+//apply plugin: "project-report"
+
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+version = '1.0'
+
+ext {
+    slf4jVersion = "1.7.6"
+    junitVersion = "4.12"
+}
+ 
+repositories {
+	mavenCentral()
+}
+ 
+dependencies {
+
+    compile "org.slf4j:slf4j-api:" + slf4jVersion
+    compile "org.slf4j:slf4j-log4j12:" + slf4jVersion
+
+    testCompile "junit:junit:" + junitVersion
+
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'MozJpeg4J', 'Implementation-Version': version
+    }
+}
+
+test {
+    systemProperty "mozjpeg.native.lib.internal.renewed", "true"
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+//    afterTest { desc, result ->
+//        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+//    }
+}
+
+task runJpegCompressionApp (dependsOn: 'classes', type: JavaExec) {
+    main = "org.libjpegturbo.turbojpeg.utils.JpegGalleryApp"
+    args project.testReportDir
+    classpath = sourceSets.test.runtimeClasspath
+    description = "Extended compression test"
+}
+
+
+task runExample (dependsOn: 'classes', type: JavaExec) {
+    main = "org.libjpegturbo.turbojpeg.TJExample"
+    classpath = sourceSets.test.runtimeClasspath
+    description = "Example of a consol application"
+}
+
+
+
+

@@ -1,0 +1,32 @@
+# Project Files      #
+######################
+/.project
+/.idea
+/.gradle
+/.classpath
+/lint.xml
+/*.iml
+/.settings
+/bin
+/obf
+/libs
+/build
+/out
+/proguard
+/target
+**/target
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Compiled source #
+###################
+*.class

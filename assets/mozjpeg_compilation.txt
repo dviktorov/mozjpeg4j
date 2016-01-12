@@ -1,0 +1,63 @@
+
+-----------------------------------------------
+
+Mac OS:
+
+git clone https://github.com/mozilla/mozjpeg.git
+
+cd mozjpeg
+
+autoreconf -fiv
+
+mkdir build && cd build
+
+export JNI_CFLAGS='-I/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/include -I/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/include/darwin'
+
+SIMD disabled: sh ../configure --with-java --with-simd=no
+SIMD enabled:  sh ../configure --with-java NASM=yasm
+
+sudo make install
+
+
+-----------------------------------------------
+
+Linux:
+
+Install:
+-- pkg-config
+-- autoconf 2.56 or later
+-- automake 1.7 or later
+-- libtool 1.4 or later
+-- nasm
+
+git clone https://github.com/mozilla/mozjpeg.git
+
+cd mozjpeg
+
+autoreconf -fiv
+
+mkdir build && cd build
+
+export JNI_CFLAGS='-I/usr/java/jdk1.7.0_79/include -I/usr/java/jdk1.7.0_79/include/linux'
+// export JNI_CFLAGS='-I/usr/lib/jvm/java-7-openjdk-i386/include -I/usr/lib/jvm/java-7-openjdk-i386/include/linux'
+
+sh ../configure --with-simd=yes --with-java // needs nasm
+
+sudo make install
+
+-----------------------------------------------
+
+Windows:
+
+git clone https://github.com/mozilla/mozjpeg.git
+
+- Install VS12
+- Install cmake
+- Run cmake gui and generate project for VS12 from cloned source
+- Open VS12 and build solution as 'Release'
+
+
+
+
+
+
