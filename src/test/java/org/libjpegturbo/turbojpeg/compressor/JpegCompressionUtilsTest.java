@@ -1,7 +1,11 @@
-package org.libjpegturbo.turbojpeg.utils;
+package org.libjpegturbo.turbojpeg.compressor;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageCompressor;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessInfo;
+import org.libjpegturbo.turbojpeg.compressor.impl.ImageCompressorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +31,8 @@ public class JpegCompressionUtilsTest {
 
     private File inImage = null;
 
+    private final static ImageCompressor imageCompressor = new ImageCompressorImpl();
+
     @Before
     public void doBefore() throws IOException, URISyntaxException {
         URL imageUrl = JpegCompressionUtilsTest.class.getResource("/images/i10_620p_sport.jpg");
@@ -41,7 +47,7 @@ public class JpegCompressionUtilsTest {
         File outImage = File.createTempFile("out", ".processed.jpg");
 
         long start = System.currentTimeMillis();
-        ImageProcessInfo processInfo = JpegCompressionUtils.compressJpeg(inImage, outImage, 80);
+        ImageProcessInfo processInfo = imageCompressor.compressJpeg(inImage, outImage, 80);
 
         log.info("Total time: {} msec", System.currentTimeMillis() - start);
         log.info("Output file size: {} bytes", outImage.length());

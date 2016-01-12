@@ -1,17 +1,21 @@
-package org.libjpegturbo.turbojpeg;
+package org.libjpegturbo.turbojpeg.app;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.nio.*;
-import javax.imageio.*;
+import org.libjpegturbo.turbojpeg.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.ShortBuffer;
 
-public class TJExample implements TJCustomFilter {
+public class MozJpegApp implements TJCustomFilter {
 
     static TJScalingFactor[] sf = null;
 
-    public static final String classname = new TJExample().getClass().getName();
+    public static final String classname = new MozJpegApp().getClass().getName();
 
     private static void usage() throws Exception {
         System.out.println("\nUSAGE: java " + classname + " <Input file> <Output file> [options]\n");
@@ -154,7 +158,7 @@ public class TJExample implements TJCustomFilter {
                     if (argv[i].equalsIgnoreCase("-rot270"))
                         xform.op = TJTransform.OP_ROT270;
                     if (argv[i].equalsIgnoreCase("-custom"))
-                        xform.cf = new TJExample();
+                        xform.cf = new MozJpegApp();
                     else if (argv[i].length() > 2 &&
                             argv[i].substring(0, 2).equalsIgnoreCase("-c")) {
                         if (i >= argv.length - 1)

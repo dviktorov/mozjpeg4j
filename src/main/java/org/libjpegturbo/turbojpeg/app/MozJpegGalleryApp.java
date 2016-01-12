@@ -25,13 +25,13 @@ import java.nio.file.Paths;
  * @author Dmitry Viktorov
  *
  */
-public class JpegGalleryApp {
+public class MozJpegGalleryApp {
 
     protected final static int[] QUALITIES = new int[] { 100, 95, 90, 85, 80, 70, 60 };
 
     protected final static String VERSION = TJ.getDefaultVersion();
 
-    private final static Logger log = LoggerFactory.getLogger(JpegGalleryApp.class);
+    private final static Logger log = LoggerFactory.getLogger(MozJpegGalleryApp.class);
 
     private final static ImageCompressor imageCompressor = new ImageCompressorImpl();
 
@@ -108,7 +108,7 @@ public class JpegGalleryApp {
     public static File[] getImagesFromResources() throws IOException {
 
         // Get the images folder from resources
-        URL resImages = JpegGalleryApp.class.getResource("/images");
+        URL resImages = MozJpegGalleryApp.class.getResource("/images");
         File resFolder = null;
         try { resFolder = new File(resImages.toURI()); } catch (Exception e) {}
 
