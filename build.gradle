@@ -3,10 +3,11 @@ apply plugin: "application"
 //apply plugin: 'groovy'
 //apply plugin: "project-report"
 
-
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-version = '1.0'
+
+group = "mozjpeg"
+def version = "1.0"
 
 ext {
     slf4jVersion = "1.7.6"
@@ -24,12 +25,6 @@ dependencies {
 
     testCompile "junit:junit:" + junitVersion
 
-}
-
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'MozJpeg4J', 'Implementation-Version': version
-    }
 }
 
 test {
@@ -54,3 +49,44 @@ task runExample (dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     description = "Example of a consol application"
 }
+
+jar {
+    manifest {
+        attributes(
+            "Manifest-Version": "1.0",
+            "Specification-Title": "MozJpeg library for Java (version 3.1)",
+            "Specification-Version": version,
+            "Created-By": "Dmitry G. Viktorov",
+            "Main-Class": "org.libjpegturbo.turbojpeg.utils.MozJpegApp",
+            "Class-Path": configurations.compile.collect { it.getName() }.join(" ")
+        )
+    }
+}
+
+
+task jarOSGI (dependsOn: "classes", type: Jar) {
+    manifest {
+        attributes(
+                "Manifest-Version": "1.0",
+                "Bnd-LastModified": new Date().time,
+                "Bundle-ClassPath": ".",
+                "Bundle-Description": "MozJpeg4J OSGI bundle (version 3.1)",
+                "Bundle-ManifestVersion": "2",
+                "Bundle-Name": "MozJpeg4J 3.1 bundle",
+                "Bundle-SymbolicName": "org.libjpegturbo.turbojpeg",
+                "Bundle-Version": version,
+                "Created-By": "Dmitry G. Viktorov",
+                "Originally-Created-By": "Dmitry G. Viktorov",
+                "Main-Class": "org.libjpegturbo.turbojpeg.utils.MozJpegApp",
+                "Export-Package": 'org.libjpegturbo.turbojpeg;version="' + version + '",org.libjpegturbo.turbojpeg.compressor.api;version="' + version + '",org.libjpegturbo.turbojpeg.compressor.impl;version="' + version + '"',
+                "Import-Package": "org.slf4j;resolution:=optional",
+                "Tool": "Bnd-1.50.0"
+        )
+    }
+    classifier = "osgi"
+    baseName = project.name + "-" + version
+    from sourceSets.main.output
+}
+
+
+

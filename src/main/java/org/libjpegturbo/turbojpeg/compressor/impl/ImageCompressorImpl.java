@@ -4,12 +4,14 @@ import org.libjpegturbo.turbojpeg.*;
 import org.libjpegturbo.turbojpeg.compressor.api.ImageCompressor;
 import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
 import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessInfo;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessParameters;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -24,74 +26,43 @@ public class ImageCompressorImpl implements ImageCompressor {
 
     static TJScalingFactor[] sf = null;
 
-    // Get scaling factors
+    // Retrieve scaling factors
     static {
         try { sf = TJ.getScalingFactors(); } catch (Exception e) {}
     }
 
     @Override
-    public ImageProcessInfo compressJpeg(File inFile, File outFile, int quality) throws ImageProcessException {
-        return compressJpeg(inFile, outFile, quality, -1, 0, 1, 1);
-    }
-
-    @Override
-    public ImageProcessInfo compressJpeg(File inFile, File outFile, int quality, int outSubsamp, int flags, int scaleNum, int scaleDenom) throws ImageProcessException {
-
-        // Don't process image if TJ is not usable
-        if (!TJ.isUsable()) {
-            throw new ImageProcessException("Native library can't be used at the current platform");
-        }
-
-        try {
-
-            FileInputStream fis = new FileInputStream(inFile);
-            int inputSize = fis.available();
-            if (inputSize < 1) {
-                throw new ImageProcessException("Input file contains no data");
-            }
-
-            byte[] inputImage = new byte[inputSize];
-            fis.read(inputImage);
-            fis.close();
-
-            ImageProcessInfo processInfo = compressJpeg(inputImage, new TJTransform(), quality, outSubsamp, flags, scaleNum, scaleDenom);
-
-            FileOutputStream fos = new FileOutputStream(outFile);
-            byte[] outImage = processInfo.getOutputImage();
-            fos.write(outImage);
-            fos.close();
-
-            return processInfo;
-
-        } catch (Exception e) {
-            throw new ImageProcessException(e);
-        }
-
+    public boolean isUsable() {
+        return TJ.isUsable();
     }
 
     /**
      * Compresses the submitted JPEG file.
      *
      * @param inputImage - byte array of a JPEG file is required
-     * @param quality - Value from 1 to 100. Most usable values are from 5 to 95.
-     * @param outSubsamp - Subsampling
-     * @param flags - Flags for decompression / compression
-     * @param scaleNum - Scaling numerator
-     * @param scaleDenom - Scaling denominator
      * @return ImageProcessInfo with embedded compressed JPEG image as byte array
      * @throws ImageProcessException
      */
-    @Override
-    public ImageProcessInfo compressJpeg(byte[] inputImage, TJTransform transform, int quality, int outSubsamp, int flags, int scaleNum, int scaleDenom) throws ImageProcessException {
-
-        ImageProcessInfo result = new ImageProcessInfo();
+    protected static Map<String, Object> compressImage(byte[] inputImage, TJTransform transform, Map<String, Object> processParameters) throws ImageProcessException {
 
         // Don't process image if TJ is not usable
         if (!TJ.isUsable()) {
             throw new ImageProcessException("Native library can't be used at the current platform");
         }
 
-        TJScalingFactor scaleFactor = new TJScalingFactor(scaleNum, scaleDenom);
+        if (inputImage == null) {
+            throw new IllegalArgumentException("Input image can't be null");
+        }
+
+        ImageProcessInfo result = ImageProcessInfo.fromMap(new HashMap<String, Object>());
+        ImageProcessParameters params = ImageProcessParameters.fromMap(processParameters);
+        int quality = params.getQuality();
+        int outSubsamp = params.getSubsampling();
+        int flags = params.getFlags();
+        int num = params.getNumerator();
+        int denom = params.getDenominator();
+
+        TJScalingFactor scaleFactor = new TJScalingFactor(num, denom);
 
         BufferedImage decompImage;
 
@@ -126,26 +97,59 @@ public class ImageCompressorImpl implements ImageCompressor {
         try {
 
             TJCompressor compressor = createCompressor(decompImage, quality, outSubsamp);
-            byte[] compImage = chopByteArray(compressor.compress(flags), compressor.getCompressedSize());
+            result.setOutputImage(compressor.compress(flags));
+            result.setOutputImageSize(compressor.getCompressedSize());
 
             // Close and nullify compressor
             compressor.close();
             compressor = null;
-            result.setOutputImage(compImage);
 
         } catch (Exception e) {
             throw new ImageProcessException(e);
         }
 
-        return result;
+        return result.toMap();
 
     }
 
-    protected static byte[] chopByteArray(byte[] buffer, int size) throws Exception {
-        if (buffer.length > size) {
-            buffer = Arrays.copyOf(buffer, size);
+    @Override
+    public Map<String, Object> compressImage(byte[] inputImage, Map<String, Object> processParameters) throws ImageProcessException {
+        return compressImage(inputImage, new TJTransform(), processParameters);
+    }
+
+    @Override
+    public Map<String, Object> compressImage(File inFile, File outFile, Map<String, Object> processParameters) throws ImageProcessException {
+
+        // Don't process image if TJ is not usable
+        if (!TJ.isUsable()) {
+            throw new ImageProcessException("Native library can't be used at the current platform");
         }
-        return buffer;
+
+        try {
+
+            FileInputStream fis = new FileInputStream(inFile);
+            int inputSize = fis.available();
+            if (inputSize < 1) {
+                throw new ImageProcessException("Input file contains no data");
+            }
+
+            byte[] inputImage = new byte[inputSize];
+            fis.read(inputImage);
+            fis.close();
+
+            Map<String, Object> processMap = compressImage(inputImage, processParameters);
+            ImageProcessInfo processInfo = ImageProcessInfo.fromMap(processMap);
+
+            FileOutputStream fos = new FileOutputStream(outFile);
+            fos.write(processInfo.getOutputImage(), 0, processInfo.getOutputImageSize());
+            fos.close();
+
+            return processMap;
+
+        } catch (Exception e) {
+            throw new ImageProcessException(e);
+        }
+
     }
 
     protected static TJDecompressor createDecompressor(byte[] image, TJTransform transform) throws Exception {
@@ -178,11 +182,6 @@ public class ImageCompressorImpl implements ImageCompressor {
         compressor.setSourceImage(image, 0, 0, 0, 0);
         //compressor.setSourceImage(bmpBuf, 0, 0, result.getOutputWidth(), 0, result.getOutputHeight(), TJ.PF_BGRX);
         return compressor;
-    }
-
-    @Override
-    public boolean isUsable() {
-        return TJ.isUsable();
     }
 
 }

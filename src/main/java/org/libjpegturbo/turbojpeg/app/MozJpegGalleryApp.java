@@ -4,6 +4,7 @@ import org.libjpegturbo.turbojpeg.TJ;
 import org.libjpegturbo.turbojpeg.compressor.api.ImageCompressor;
 import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
 import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessInfo;
+import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessParameters;
 import org.libjpegturbo.turbojpeg.compressor.impl.ImageCompressorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +58,15 @@ public class MozJpegGalleryApp {
 
             for (int i = 0; i < QUALITIES.length; i++) {
 
-                int q = QUALITIES[i];
+                ImageProcessParameters params = ImageProcessParameters.fromEmptyMap().setQuality(QUALITIES[i]);
 
-                String outImageName = "proc_" + q + "_" + image.getName();
+                String outImageName = "proc_" + params.getQuality() + "_" + image.getName();
                 Path outImage = Paths.get(outDir.getPath() + File.separator + outImageName);
 
-                log.info("Processing image with quality={}: {}", q, inImage.getFileName());
+                log.info("Processing image with quality={}: {}", params.getQuality(), inImage.getFileName());
 
                 long startTime = System.currentTimeMillis();
-                ImageProcessInfo processInfo = imageCompressor.compressJpeg(inImage.toFile(), outImage.toFile(), q);
+                ImageProcessInfo processInfo = ImageProcessInfo.fromMap(imageCompressor.compressImage(inImage.toFile(), outImage.toFile(), params.toMap()));
                 long totalTime = System.currentTimeMillis() - startTime;
 
                 long outImageSize = outImage.toFile().length();
@@ -73,7 +74,7 @@ public class MozJpegGalleryApp {
                 log.info("Total time: {} msec", totalTime);
 
                 html.write("<h2>" + inImage.getFileName() + "</h2>\r\n");
-                html.write("<h3>Quality: " + q + "<br>\r\n");
+                html.write("<h3>Quality: " + params.getQuality() + "<br>\r\n");
 
                 html.write("In/Out Dimension: " + processInfo.getInputDimension() + " / " + processInfo.getOutputDimension() + "<br>");
                 html.write("In/Out Size: " + toReadableByteCount(inImageSize, false) +

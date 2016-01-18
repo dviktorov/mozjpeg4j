@@ -39,6 +39,16 @@ package org.libjpegturbo.turbojpeg;
  */
 public class TJScalingFactor {
 
+    /**
+     * Numerator
+     */
+    private int num = 1;
+
+    /**
+     * Denominator
+     */
+    private int denom = 1;
+
     public TJScalingFactor(int num, int denom) {
         if (num < 1 || denom < 1) {
             throw new IllegalArgumentException("Numerator and denominator must be >= 1");
@@ -97,15 +107,5 @@ public class TJScalingFactor {
     public boolean isOne() {
         return (num == 1 && denom == 1);
     }
-
-    /**
-     * Numerator
-     */
-    private int num = 1;
-
-    /**
-     * Denominator
-     */
-    private int denom = 1;
 
 };
