@@ -1,5 +1,6 @@
 package org.libjpegturbo.turbojpeg.compressor.api;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ public interface ImageCompressor {
     public final static String METHOD_COMPRESS_IMAGE = "compressImage";
 
     public boolean isUsable();
+
+    public Map<String, Object> compressImage(BufferedImage inImage, int quality, int subsampling, int flags) throws ImageProcessException;
 
     public Map<String, Object> compressImage(byte[] inputImage, Map<String, Object> processParameters) throws ImageProcessException;
 

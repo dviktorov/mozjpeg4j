@@ -5,6 +5,7 @@ import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class ImageCompressorReflectionDelegate implements ImageCompressor {
 
     private Object compressor;
     private Method isUsable;
+    private Method compressBufferedImage;
     private Method compressImageBuffer;
     private Method compressImageFile;
 
@@ -37,6 +39,7 @@ public class ImageCompressorReflectionDelegate implements ImageCompressor {
             compressor = clazz.newInstance();
 
             isUsable = clazz.getDeclaredMethod(METHOD_IS_USABLE);
+            compressBufferedImage = clazz.getDeclaredMethod(METHOD_COMPRESS_IMAGE, BufferedImage.class, int.class, int.class, int.class);
             compressImageBuffer = clazz.getDeclaredMethod(METHOD_COMPRESS_IMAGE, byte[].class, Map.class);
             compressImageFile = clazz.getDeclaredMethod(METHOD_COMPRESS_IMAGE, File.class, File.class, Map.class);
 
@@ -57,6 +60,7 @@ public class ImageCompressorReflectionDelegate implements ImageCompressor {
         usable = false;
         compressor = null;
         isUsable = null;
+        compressBufferedImage = null;
         compressImageBuffer = null;
         compressImageFile = null;
     }
@@ -70,6 +74,15 @@ public class ImageCompressorReflectionDelegate implements ImageCompressor {
             }
         } catch (Exception e) {}
         return false;
+    }
+
+    @Override
+    public Map<String, Object> compressImage(BufferedImage inImage, int quality, int subsampling, int flags) throws ImageProcessException {
+        try {
+            return (Map<String, Object>) compressBufferedImage.invoke(compressor, inImage, quality, subsampling, flags);
+        } catch (Exception e) {
+            throw new ImageProcessException(e);
+        }
     }
 
     @Override

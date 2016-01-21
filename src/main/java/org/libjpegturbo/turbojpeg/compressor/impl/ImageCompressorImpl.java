@@ -37,13 +37,53 @@ public class ImageCompressorImpl implements ImageCompressor {
     }
 
     /**
+     * Compresses the given uncompressed image to JPEG image. For simplification
+     * the input parameters are used instead of parameter map.
+     */
+    @Override
+    public Map<String, Object> compressImage(BufferedImage inImage, int quality, int subsampling, int flags) throws ImageProcessException {
+
+        // Don't process image if TJ is not usable
+        if (!TJ.isUsable()) {
+            throw new ImageProcessException("Native library can't be used at the current platform");
+        }
+
+        if (inImage == null) {
+            throw new ImageProcessException("Input image can't be null");
+        }
+
+        ImageProcessInfo result = ImageProcessInfo.fromMap(new HashMap<String, Object>());
+        result.setInputWidth(inImage.getWidth());
+        result.setInputHeight(inImage.getHeight());
+        result.setOutputWidth(inImage.getWidth());
+        result.setOutputHeight(inImage.getHeight());
+
+        try {
+
+            TJCompressor compressor = createCompressor(inImage, quality, subsampling);
+            result.setOutputImage(compressor.compress(flags));
+            result.setOutputImageSize(compressor.getCompressedSize());
+
+            // Close compressor
+            compressor.close();
+
+            return result.toMap();
+
+        } catch (Exception e) {
+            throw new ImageProcessException(e);
+        }
+
+    }
+
+    /**
      * Compresses the submitted JPEG file.
      *
      * @param inputImage - byte array of a JPEG file is required
      * @return ImageProcessInfo with embedded compressed JPEG image as byte array
      * @throws ImageProcessException
      */
-    protected static Map<String, Object> compressImage(byte[] inputImage, TJTransform transform, Map<String, Object> processParameters) throws ImageProcessException {
+    @Override
+    public Map<String, Object> compressImage(byte[] inputImage, Map<String, Object> processParameters) throws ImageProcessException {
 
         // Don't process image if TJ is not usable
         if (!TJ.isUsable()) {
@@ -51,10 +91,11 @@ public class ImageCompressorImpl implements ImageCompressor {
         }
 
         if (inputImage == null) {
-            throw new IllegalArgumentException("Input image can't be null");
+            throw new ImageProcessException("Input image can't be null");
         }
 
         ImageProcessInfo result = ImageProcessInfo.fromMap(new HashMap<String, Object>());
+
         ImageProcessParameters params = ImageProcessParameters.fromMap(processParameters);
         int quality = params.getQuality();
         int outSubsamp = params.getSubsampling();
@@ -70,7 +111,7 @@ public class ImageCompressorImpl implements ImageCompressor {
         TJDecompressor decompressor = null;
         try {
 
-            decompressor = createDecompressor(inputImage, transform);
+            decompressor = createDecompressor(inputImage, new TJTransform());
 
             result.setInputWidth(decompressor.getWidth());
             result.setInputHeight(decompressor.getHeight());
@@ -94,27 +135,14 @@ public class ImageCompressorImpl implements ImageCompressor {
             throw new ImageProcessException(e);
         }
 
-        try {
-
-            TJCompressor compressor = createCompressor(decompImage, quality, outSubsamp);
-            result.setOutputImage(compressor.compress(flags));
-            result.setOutputImageSize(compressor.getCompressedSize());
-
-            // Close and nullify compressor
-            compressor.close();
-            compressor = null;
-
-        } catch (Exception e) {
-            throw new ImageProcessException(e);
-        }
+        // Set output image to result
+        Map<String, Object> compressedResultMap = compressImage(decompImage, quality, outSubsamp, flags);
+        ImageProcessInfo compressedResult = ImageProcessInfo.fromMap(compressedResultMap);
+        result.setOutputImage(compressedResult.getOutputImage());
+        result.setOutputImageSize(compressedResult.getOutputImageSize());
 
         return result.toMap();
 
-    }
-
-    @Override
-    public Map<String, Object> compressImage(byte[] inputImage, Map<String, Object> processParameters) throws ImageProcessException {
-        return compressImage(inputImage, new TJTransform(), processParameters);
     }
 
     @Override

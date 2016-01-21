@@ -97,6 +97,7 @@ public class ImageProcessInfo {
     }
 
     public enum ProcessKey {
+
         INPUT_WIDTH(0),
         INPUT_HEIGHT(0),
         OUTPUT_WIDTH(0),
