@@ -1,4 +1,4 @@
-# MozJpeg4J
+# About MozJpeg4J
 This project is based on Mozilla JPEG Encoder (MozJpeg). The original project is written in C and provides a Java 
 wrapper with the expectation to find a compiled library in the system. MozJpeg4J simplifies its use in Java by including
 a set of pre-compiled libraries for Windows, Linux, and Mac. It also extends the Java wrapper by loading the native 
