@@ -37,7 +37,7 @@ test {
 //    }
 }
 
-task runJpegCompressionApp (dependsOn: 'classes', type: JavaExec) {
+task runJpegCompressionDemoApp (dependsOn: 'classes', type: JavaExec) {
     main = "org.libjpegturbo.turbojpeg.app.MozJpegGalleryApp"
     args project.testReportDir
     classpath = sourceSets.test.runtimeClasspath
@@ -61,6 +61,7 @@ jar {
             "Class-Path": configurations.compile.collect { it.getName() }.join(" ")
         )
     }
+    baseName = project.name + "-" + version
 }
 
 
