@@ -1,6 +1,7 @@
-package org.libjpegturbo.turbojpeg.compressor.api;
+package org.libjpegturbo.turbojpeg.processor.api;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -27,48 +28,48 @@ public class ImageProcessInfo {
         return getValue(ProcessKey.INPUT_WIDTH);
     }
 
-    public void setInputWidth(int width) {
-        setValue(ProcessKey.INPUT_WIDTH, width);
+    public ImageProcessInfo setInputWidth(int width) {
+        return setValue(ProcessKey.INPUT_WIDTH, width);
     }
 
     public int getInputHeight() {
         return getValue(ProcessKey.INPUT_HEIGHT);
     }
 
-    public void setInputHeight(int height) {
-        setValue(ProcessKey.INPUT_HEIGHT, height);
+    public ImageProcessInfo setInputHeight(int height) {
+        return setValue(ProcessKey.INPUT_HEIGHT, height);
     }
 
     public int getOutputWidth() {
         return getValue(ProcessKey.OUTPUT_WIDTH);
     }
 
-    public void setOutputWidth(int width) {
-        setValue(ProcessKey.OUTPUT_WIDTH, width);
+    public ImageProcessInfo setOutputWidth(int width) {
+        return setValue(ProcessKey.OUTPUT_WIDTH, width);
     }
 
     public int getOutputHeight() {
         return getValue(ProcessKey.OUTPUT_HEIGHT);
     }
 
-    public void setOutputHeight(int height) {
-        setValue(ProcessKey.OUTPUT_HEIGHT, height);
+    public ImageProcessInfo setOutputHeight(int height) {
+        return setValue(ProcessKey.OUTPUT_HEIGHT, height);
     }
 
     public byte[] getOutputImage() {
         return getValue(ProcessKey.OUTPUT_IMAGE);
     }
 
-    public void setOutputImage(byte[] outputImage) {
-        setValue(ProcessKey.OUTPUT_IMAGE, outputImage);
+    public ImageProcessInfo setOutputImage(byte[] outputImage) {
+        return setValue(ProcessKey.OUTPUT_IMAGE, outputImage);
     }
 
     public int getOutputImageSize() {
         return getValue(ProcessKey.OUTPUT_IMAGE_SIZE);
     }
 
-    public void setOutputImageSize(int size) {
-        setValue(ProcessKey.OUTPUT_IMAGE_SIZE, size);
+    public ImageProcessInfo setOutputImageSize(int size) {
+        return setValue(ProcessKey.OUTPUT_IMAGE_SIZE, size);
     }
 
     public Map<String, Object> toMap() {
@@ -79,8 +80,13 @@ public class ImageProcessInfo {
         return new ImageProcessInfo(map);
     }
 
-    public void setValue(ProcessKey key, Object value) {
+    public static ImageProcessInfo newInstance() {
+        return new ImageProcessInfo(new LinkedHashMap<String, Object>());
+    }
+
+    public ImageProcessInfo setValue(ProcessKey key, Object value) {
         map.put(key.name(), value);
+        return this;
     }
 
     public <T> T getValue(ProcessKey key) {

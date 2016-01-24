@@ -40,7 +40,7 @@ import java.nio.ByteOrder;
  * @author Josh Aas, D.R. Commander, Dmitry Viktorov
  *
  */
-public class TJCompressor {
+public class TJCompressor implements AutoCloseable {
 
     private static final String NO_ASSOC_ERROR = "No source image is associated with this instance";
 

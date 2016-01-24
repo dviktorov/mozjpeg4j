@@ -237,14 +237,13 @@ public class MozJpegApp implements TJCustomFilter {
                 width = tjd.getWidth();
                 height = tjd.getHeight();
                 int inSubsamp = tjd.getSubsamp();
-                System.out.println("Source Image: " + width + " x " + height +
-                        " pixels, " + sampName[inSubsamp] + " subsampling");
-                if (outSubsamp < 0)
+                System.out.println("Source Image: " + width + " x " + height + " pixels, " + sampName[inSubsamp] + " subsampling");
+                if (outSubsamp < 0) {
                     outSubsamp = inSubsamp;
+                }
 
                 if (outFormat.equalsIgnoreCase("jpg") &&
-                        (xform.op != TJTransform.OP_NONE || xform.options != 0) &&
-                        scaleFactor.isOne()) {
+                        (xform.op != TJTransform.OP_NONE || xform.options != 0) && scaleFactor.isOne()) {
                     file = new File(argv[1]);
                     FileOutputStream fos = new FileOutputStream(file);
                     fos.write(tjd.getJPEGBuf(), 0, tjd.getJPEGSize());
@@ -255,11 +254,11 @@ public class MozJpegApp implements TJCustomFilter {
                 width = scaleFactor.getScaled(width);
                 height = scaleFactor.getScaled(height);
 
-                if (!outFormat.equalsIgnoreCase("jpg"))
-                    img = tjd.decompress(width, height, BufferedImage.TYPE_INT_RGB,
-                            flags);
-                else
+                if (!outFormat.equalsIgnoreCase("jpg")) {
+                    img = tjd.decompress(width, height, BufferedImage.TYPE_INT_RGB, flags);
+                } else {
                     bmpBuf = tjd.decompress(width, 0, height, TJ.PF_BGRX, flags);
+                }
                 tjd.close();
             } else {
                 img = ImageIO.read(file);

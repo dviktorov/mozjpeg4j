@@ -40,7 +40,7 @@ import java.nio.ByteOrder;
  * @author Josh Aas, D.R. Commander, Dmitry Viktorov
  *
  */
-public class TJDecompressor {
+public class TJDecompressor implements AutoCloseable {
 
     private static final String NO_ASSOC_ERROR = "No JPEG image is associated with this instance";
 
@@ -821,8 +821,9 @@ public class TJDecompressor {
      * Free the native structures associated with this decompressor instance.
      */
     public void close() throws Exception {
-        if (handle != 0)
+        if (handle != 0) {
             destroy();
+        }
     }
 
     protected void finalize() throws Throwable {
@@ -833,8 +834,6 @@ public class TJDecompressor {
             super.finalize();
         }
     }
-
-    ;
 
     private native void init() throws Exception;
 

@@ -1,11 +1,11 @@
-package org.libjpegturbo.turbojpeg.compressor.impl;
+package org.libjpegturbo.turbojpeg.processor.impl;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.libjpegturbo.turbojpeg.compressor.api.ImageCompressor;
-import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessException;
-import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessInfo;
-import org.libjpegturbo.turbojpeg.compressor.api.ImageProcessParameters;
+import org.libjpegturbo.turbojpeg.processor.api.ImageProcessException;
+import org.libjpegturbo.turbojpeg.processor.api.ImageProcessInfo;
+import org.libjpegturbo.turbojpeg.processor.api.ImageProcessor;
+import org.libjpegturbo.turbojpeg.processor.utils.ImageProcessorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,33 +26,33 @@ import static org.junit.Assert.*;
  * @author Dmitry Viktorov
  *
  */
-public class ImageCompressorTest {
+public class ImageProcessorTest {
 
-    private final static Logger log = LoggerFactory.getLogger(ImageCompressorTest.class);
+    private final static Logger log = LoggerFactory.getLogger(ImageProcessorTest.class);
 
     private File inImage = null;
 
     @Before
     public void doBefore() throws IOException, URISyntaxException {
-        URL imageUrl = ImageCompressorTest.class.getResource("/images/i10_620p_sport.jpg");
+        URL imageUrl = ImageProcessorTest.class.getResource("/images/i10_620p_sport.jpg");
         inImage = new File(imageUrl.toURI());
     }
 
     @Test
     public void compressorImplTest() throws IOException, URISyntaxException, ImageProcessException {
-        compressionTest(new ImageCompressorImpl(), inImage);
+        compressionTest(new ImageProcessorImpl(), inImage);
     }
 
     @Test
     public void compressorDelegateTest() throws IOException, URISyntaxException, ImageProcessException {
-        compressionTest(new ImageCompressorReflectionDelegate(), inImage);
+        compressionTest(new ImageProcessorReflectionDelegate(), inImage);
     }
 
-    public static void compressionTest(ImageCompressor imageCompressor, File inImage) throws IOException, URISyntaxException, ImageProcessException {
+    public static void compressionTest(ImageProcessor processor, File inImage) throws IOException, URISyntaxException, ImageProcessException {
 
-        log.info("Testing compressor implementation: {}", imageCompressor.getClass());
+        log.info("Testing compressor implementation: {}", processor.getClass());
 
-        assertTrue("Compressor is not detected as usable", imageCompressor.isUsable());
+        assertTrue("Compressor is not detected as usable", processor.isUsable());
 
         assertNotNull("Input image couldn't be found", inImage);
 
@@ -60,10 +60,7 @@ public class ImageCompressorTest {
 
         long start = System.currentTimeMillis();
 
-        Map<String, Object> procParams = ImageProcessParameters.fromEmptyMap().setQuality(80).toMap();
-        assertNotNull("Process parameters can't be null", procParams);
-
-        Map<String, Object> processResult = imageCompressor.compressImage(inImage, outImage, procParams);
+        Map<String, Object> processResult = ImageProcessorUtils.compressImage(processor, inImage, outImage, 80);
         assertNotNull("Process result is never expected to be null", processResult);
         ImageProcessInfo processInfo = ImageProcessInfo.fromMap(processResult);
 
