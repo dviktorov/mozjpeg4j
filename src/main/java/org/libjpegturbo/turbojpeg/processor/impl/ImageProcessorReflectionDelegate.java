@@ -84,7 +84,7 @@ public class ImageProcessorReflectionDelegate implements ImageProcessor {
     @Override
     public ByteArrayInputStream compressGeneralImage(BufferedImage inImage, int quality, int subsampling, int flags) throws ImageProcessException {
         try {
-            return (ByteArrayInputStream) compressGeneral.invoke(compressor, quality, subsampling, flags);
+            return (ByteArrayInputStream) compressGeneral.invoke(compressor, inImage, quality, subsampling, flags);
         } catch (Exception e) {
             throw new ImageProcessException(e);
         }
