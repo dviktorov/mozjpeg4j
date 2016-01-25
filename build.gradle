@@ -44,7 +44,7 @@ task runJpegCompressionDemoApp (dependsOn: 'classes', type: JavaExec) {
     description = "Extended compression test"
 }
 
-task runExample (dependsOn: 'classes', type: JavaExec) {
+task runMozJpeg (dependsOn: 'classes', type: JavaExec) {
     main = "org.libjpegturbo.turbojpeg.app.MozJpegApp"
     classpath = sourceSets.test.runtimeClasspath
     description = "Example of a consol application"
