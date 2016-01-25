@@ -27,6 +27,24 @@ public class ImageProcessorUtils {
 
             byte[] image = inputStreamToByteArray(fis);
 
+            Map<String, Object> decompData = compressImage(processor, image, quality, numerator, denominator, subsampling, flags);
+            ImageProcessInfo info = ImageProcessInfo.fromMap(new HashMap<String, Object>(decompData));
+
+            try (FileOutputStream fos = new FileOutputStream(outFile)) {
+                fos.write(info.getOutputImage(), 0, info.getOutputImageSize());
+                return info.toMap();
+            }
+
+        } catch (Exception e) {
+            throw new ImageProcessException(e);
+        }
+
+    }
+
+    public static Map<String, Object> compressImage(ImageProcessor processor, byte[] image, int quality, int numerator, int denominator, int subsampling, int flags) throws ImageProcessException {
+
+        try {
+
             Map<String, Object> decompData = processor.decompressJpegImage(image, numerator, denominator, flags);
             ImageProcessInfo info = ImageProcessInfo.fromMap(new HashMap<String, Object>(decompData));
 
@@ -35,16 +53,13 @@ public class ImageProcessorUtils {
                     quality, subsampling, flags);
 
             byte[] imageBuf = ShallowByteArrayInputStream.getBuffer(imageStream);
-            int imagePos = ShallowByteArrayInputStream.getPosition(imageStream);
+            //int imagePos = ShallowByteArrayInputStream.getPosition(imageStream);
             int imageSize = ShallowByteArrayInputStream.getCount(imageStream);
 
             info.setOutputImage(imageBuf);
             info.setOutputImageSize(imageSize);
 
-            try (FileOutputStream fos = new FileOutputStream(outFile)) {
-                fos.write(imageBuf, imagePos, imageSize);
-                return info.toMap();
-            }
+            return info.toMap();
 
         } catch (Exception e) {
             throw new ImageProcessException(e);
