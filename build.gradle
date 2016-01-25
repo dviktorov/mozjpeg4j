@@ -71,15 +71,15 @@ task jarOSGI (dependsOn: "classes", type: Jar) {
                 "Manifest-Version": "1.0",
                 "Bnd-LastModified": new Date().time,
                 "Bundle-ClassPath": ".",
-                "Bundle-Description": "MozJpeg4J OSGI bundle (version 3.1)",
+                "Bundle-Description": "MozJpeg4J OSGI bundle (MozJpeg version 3.1)",
                 "Bundle-ManifestVersion": "2",
-                "Bundle-Name": "MozJpeg4J 3.1 bundle",
+                "Bundle-Name": "MozJpeg4J (MozJpeg version 3.1)",
                 "Bundle-SymbolicName": "org.libjpegturbo.turbojpeg",
                 "Bundle-Version": version,
                 "Created-By": "Dmitry G. Viktorov",
                 "Originally-Created-By": "Dmitry G. Viktorov",
                 "Main-Class": "org.libjpegturbo.turbojpeg.utils.MozJpegApp",
-                "Export-Package": 'org.libjpegturbo.turbojpeg;version="' + version + '",org.libjpegturbo.turbojpeg.compressor.api;version="' + version + '",org.libjpegturbo.turbojpeg.compressor.impl;version="' + version + '"',
+                "Export-Package": 'org.libjpegturbo.turbojpeg;version="' + version + '",org.libjpegturbo.turbojpeg.processor.api;version="' + version + '",org.libjpegturbo.turbojpeg.processor.impl;version="' + version + '"',
                 "Import-Package": "org.slf4j;resolution:=optional",
                 "Tool": "Bnd-1.50.0"
         )
