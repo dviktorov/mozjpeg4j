@@ -14,7 +14,8 @@ import java.util.Map;
 
 /**
  *
- * Utilities which add additional methods for image processing.
+ * Delegate that by default calls ImageProcessorImpl. It may be useful at places where direct code is
+ * not available, e.g. OSGi bundle.
  *
  * @since version 1.0,	01/23/2016
  *
