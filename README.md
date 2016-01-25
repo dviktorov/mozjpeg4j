@@ -36,7 +36,7 @@ an HTML report at ./build/reports/jpeg_compression. You may open index.html in a
 
 
 # Running MozJpeg command line utility
-To run the utility that is presented at [Mozilla JPEG Encoder (MozJpeg)](https://github.com/mozilla/mozjpeg) it you may
+To run the utility that is presented at [Mozilla JPEG Encoder (MozJpeg)](https://github.com/mozilla/mozjpeg) you may
 run the command below. You may refer to the printed "usage" message to understand how to use the utility and the 
 options it recognizes.
 
