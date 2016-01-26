@@ -43,3 +43,6 @@ options it recognizes.
     gradle clean test runMozJpeg
 
 
+# License
+The license is fully inherited from [Mozilla JPEG Encoder (MozJpeg)](https://github.com/mozilla/mozjpeg). Please 
+refer to LICENSE.txt to retrieve it.
