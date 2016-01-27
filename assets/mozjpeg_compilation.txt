@@ -42,8 +42,10 @@ export JNI_CFLAGS='-I/usr/java/jdk1.7.0_79/include -I/usr/java/jdk1.7.0_79/inclu
 // export JNI_CFLAGS='-I/usr/lib/jvm/java-7-openjdk-i386/include -I/usr/lib/jvm/java-7-openjdk-i386/include/linux'
 
 sh ../configure --with-simd=yes --with-java // needs nasm
+// If nasm doesn't work (e.g. RHEL5): sh ../configure --with-simd=yes --with-java NASM=yasm
 
 sudo make install
+// If problems with libtool (e.g. RHEL5): sudo make install LIBTOOL='/usr/bin/libtool --tag=CC'
 
 -----------------------------------------------
 
