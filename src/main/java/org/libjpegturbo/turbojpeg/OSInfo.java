@@ -28,7 +28,9 @@
 
 package org.libjpegturbo.turbojpeg;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 
 /**
  *
@@ -73,7 +75,44 @@ public class OSInfo {
     }
 
     public static String getTempDirectory() {
-        String val = System.getProperty("java.io.tmpdir");
+        return extractDirectory(System.getProperty("java.io.tmpdir"));
+    }
+
+    /**
+     * If default temp directory is mounted w/o executable permission, it can't be used.
+     *
+     * Method will try to resolve if /tmp doesn't have noexec option, and switch to
+     * tmp in user home directory if it's the case.
+     *
+     * It works only on linux OS and returns default tmp at other OS.
+     */
+    public static String getExecutableTempDirectory() {
+        String result = getTempDirectory();
+
+        // Do the check only for linux
+        if (getOSName() == OSName.linux) {
+            try {
+                if (!isExecutableTemp(result)) {
+                    String homeTemp = getUserHomeDirectory() + File.separator + "tmp";
+                    File newTemp = new File(homeTemp);
+                    if (!newTemp.exists()) {
+                        newTemp.mkdirs();
+                    }
+                    if (newTemp.exists()) {
+                        result = homeTemp;
+                    }
+                }
+            } catch (Exception e) {}
+        }
+
+        return result;
+    }
+
+    public static String getUserHomeDirectory() {
+        return extractDirectory(System.getProperty("user.home"));
+    }
+
+    protected static String extractDirectory(String val) {
         val = val != null ? val : "";
         if (val.endsWith(File.separator)) {
             val = val.substring(0, val.length() - 1);
@@ -104,6 +143,23 @@ public class OSInfo {
         unknown,
         x86_64,
         x86
+    }
+
+    protected static boolean isExecutableTemp(String tempDir) {
+        if (tempDir != null && tempDir.trim().length() > 0) {
+            try {
+                Process p = Runtime.getRuntime().exec("mount");
+                BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String match = "(.*)" + tempDir + "(.*)noexec(.*)";
+                String line;
+                while ((line = in.readLine()) != null) {
+                    if (line.matches(match)) {
+                        return false;
+                    }
+                }
+            } catch (Exception e) {}
+        }
+        return true;
     }
 
 }

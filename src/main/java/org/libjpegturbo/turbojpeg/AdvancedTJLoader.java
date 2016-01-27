@@ -295,11 +295,11 @@ class AdvancedTJLoader {
     }
 
     protected static String getExtractedLibraryPath() {
-        return OSInfo.getTempDirectory() + getInternalLibraryPath(File.separator);
+        return OSInfo.getExecutableTempDirectory() + getInternalLibraryPath(File.separator);
     }
 
     protected static String getFullExtractedLibraryPath() {
-        return OSInfo.getTempDirectory() + getLibraryFullInternalPath(File.separator);
+        return OSInfo.getExecutableTempDirectory() + getLibraryFullInternalPath(File.separator);
     }
 
     public static String getInternalLibVersion() {

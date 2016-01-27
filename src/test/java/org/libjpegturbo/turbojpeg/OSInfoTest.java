@@ -40,10 +40,26 @@ public class OSInfoTest {
     @Test
     public void osTempDirTest() {
 
-        String temp = OSInfo.getTempDirectory();
-        assertNotNull(temp);
-        log.info("OS Temp Directory: {}", temp);
+        String result = OSInfo.getTempDirectory();
+        assertNotNull(result);
+        log.info("OS Temp Directory: {}", result);
 
+    }
+
+    @Test
+    public void osUserHomeDirTest() {
+
+        String result = OSInfo.getUserHomeDirectory();
+        assertNotNull(result);
+        log.info("User Home Directory: {}", result);
+
+    }
+
+    @Test
+    public void osExecutableTempDirectoryTest() {
+        String result = OSInfo.getExecutableTempDirectory();
+        assertNotNull(result);
+        log.info("Executable Temp Directory: {}", result);
     }
 
 }
