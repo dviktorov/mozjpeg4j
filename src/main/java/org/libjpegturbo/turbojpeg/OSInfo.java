@@ -36,7 +36,9 @@ import java.io.InputStreamReader;
  *
  * System information utilities
  *
- * @since version 1.0,	01/05/2016
+ * @since version 1.0,	    01/05/2016
+ *
+ * @updated version 1.1,	01/27/2016
  *
  * @author Dmitry Viktorov
  *

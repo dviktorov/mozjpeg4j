@@ -74,7 +74,7 @@ class AdvancedTJLoader {
      */
     protected static Map<String, String> getLibrariesData() {
         return new HashMap<String, String>() {{
-            put("/native_mozjpeg/version_3_1/linux_simd_disabled_x86/libturbojpeg.so", "54f3347a5e23e57f2c39f41ae1ea62ac");
+            put("/native_mozjpeg/version_3_1/linux_simd_disabled_x86/libturbojpeg.so", "8c7207433b0440bd09617c316b4a0c5d");
             put("/native_mozjpeg/version_3_1/linux_simd_disabled_x86_64/libturbojpeg.so", "e235c8d1cc9bdeeda3d6aed73af8c21f");
             put("/native_mozjpeg/version_3_1/linux_simd_enabled_x86_64/libturbojpeg.so", "bd9d9366848e7e4a5431a95eb54c6302");
             put("/native_mozjpeg/version_3_1/mac_simd_enabled_x86_64/libturbojpeg.dylib", "96c972b96aa87034bf073423dd5b4341");
