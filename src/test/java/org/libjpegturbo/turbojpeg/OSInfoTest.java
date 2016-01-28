@@ -10,7 +10,9 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Tests System information.
  *
- * @since version 1.0,	01/04/2016
+ * @since version 1.0,	    01/04/2016
+ *
+ * @updated version 1.1,	01/27/2016
  *
  * @author Dmitry Viktorov
  *
@@ -18,6 +20,24 @@ import static org.junit.Assert.assertNotNull;
 public class OSInfoTest {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Test
+    public void tempDirectoryTest() {
+
+        String temp = OSInfo.getTempDirectory();
+        assertNotNull(temp);
+        log.info("OS Temp Directory: {}", temp);
+
+        String execTemp = OSInfo.getExecutableTempDirectory();
+        assertNotNull(execTemp);
+
+        if (temp.equalsIgnoreCase(execTemp)) {
+            log.info("Executable Temp Directory (same as default): {}", execTemp);
+        } else {
+            log.info("Executable Temp Directory (different from default): {}", execTemp);
+        }
+
+    }
 
     @Test
     public void osNameTest() {
@@ -38,28 +58,12 @@ public class OSInfoTest {
     }
 
     @Test
-    public void osTempDirTest() {
-
-        String result = OSInfo.getTempDirectory();
-        assertNotNull(result);
-        log.info("OS Temp Directory: {}", result);
-
-    }
-
-    @Test
     public void osUserHomeDirTest() {
 
         String result = OSInfo.getUserHomeDirectory();
         assertNotNull(result);
         log.info("User Home Directory: {}", result);
 
-    }
-
-    @Test
-    public void osExecutableTempDirectoryTest() {
-        String result = OSInfo.getExecutableTempDirectory();
-        assertNotNull(result);
-        log.info("Executable Temp Directory: {}", result);
     }
 
 }
